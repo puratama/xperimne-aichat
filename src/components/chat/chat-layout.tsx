@@ -1,11 +1,17 @@
 "use client"
 
 import { useSession, signOut } from "next-auth/react"
+import { useTheme } from "next-themes"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { LogOut, Sparkle, Menu } from "lucide-react"
+import { LogOut, Sparkle, Sun, Moon } from "lucide-react"
 
 export function ChatLayout({ children }: { children: React.ReactNode }) {
   const { data: session } = useSession()
+  const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
 
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -22,8 +28,20 @@ export function ChatLayout({ children }: { children: React.ReactNode }) {
           </span>
         </div>
 
-        <div className="flex items-center gap-2">
-          <span className="hidden md:inline text-xs text-muted-foreground font-medium">{session?.user?.email}</span>
+        <div className="flex items-center gap-1.5">
+          {mounted && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="h-8 w-8 rounded-lg text-muted-foreground hover:text-foreground"
+            >
+              {theme === "dark" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+          )}
+
+          <span className="hidden md:inline text-xs text-muted-foreground font-medium ml-1">{session?.user?.email}</span>
           <Button
             variant="ghost"
             size="icon"

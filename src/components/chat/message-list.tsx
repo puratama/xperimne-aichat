@@ -13,10 +13,24 @@ interface MessageListProps {
 }
 
 export function MessageList({ messages, isLoading }: MessageListProps) {
+  const containerRef = useRef<HTMLDivElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const isNearBottomRef = useRef(true)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" })
+    const el = containerRef.current
+    if (!el) return
+    const onScroll = () => {
+      isNearBottomRef.current = el!.scrollHeight - el!.scrollTop - el!.clientHeight < 150
+    }
+    el.addEventListener("scroll", onScroll, { passive: true })
+    return () => el.removeEventListener("scroll", onScroll)
+  }, [])
+
+  useEffect(() => {
+    if (isNearBottomRef.current) {
+      bottomRef.current?.scrollIntoView({ behavior: "auto" })
+    }
   }, [messages])
 
   if (messages.length === 0) {
@@ -41,7 +55,7 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
   }
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div ref={containerRef} className="flex-1 overflow-y-auto">
       <div className="mx-auto max-w-3xl space-y-4 py-8 px-5">
         {messages.map((msg, i) => (
           <div
@@ -81,17 +95,13 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
           </div>
         ))}
 
-        {isLoading && (
+        {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
           <div className="flex gap-3 animate-fade-in">
             <div className="flex h-8 w-8 shrink-0 mt-1 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm">
               <Bot className="h-4 w-4" />
             </div>
             <div className="rounded-2xl border border-border/40 bg-card px-5 py-3.5 shadow-sm rounded-bl-md">
-              <div className="flex gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="h-2 w-2 rounded-full bg-primary/40 animate-bounce" style={{ animationDelay: "300ms" }} />
-              </div>
+              <p className="text-sm text-muted-foreground animate-pulse">Thinking...</p>
             </div>
           </div>
         )}

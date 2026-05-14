@@ -9,6 +9,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
@@ -58,7 +59,7 @@ function SidebarContent({
       {showClose && (
         <div className="flex items-center justify-between p-4 pb-2">
           <span className="font-heading text-sm font-semibold tracking-tight">History</span>
-          <button onClick={onClose} className="h-7 w-7 rounded-lg hover:bg-accent flex items-center justify-center">
+          <button onClick={onClose} className="h-7 w-7 rounded-lg hover:bg-accent flex items-center justify-center cursor-pointer">
             <XIcon className="h-4 w-4" />
           </button>
         </div>
@@ -107,10 +108,10 @@ function SidebarContent({
                     if (e.key === "Escape") setEditingId(null)
                   }}
                 />
-                <button onClick={saveRename} className="text-muted-foreground hover:text-foreground p-0.5">
+                <button onClick={saveRename} className="text-muted-foreground hover:text-foreground p-0.5 cursor-pointer">
                   <Check className="h-3 w-3" />
                 </button>
-                <button onClick={() => setEditingId(null)} className="text-muted-foreground hover:text-foreground p-0.5">
+                <button onClick={() => setEditingId(null)} className="text-muted-foreground hover:text-foreground p-0.5 cursor-pointer">
                   <X className="h-3 w-3" />
                 </button>
               </div>
@@ -121,17 +122,18 @@ function SidebarContent({
 
                 <DropdownMenu>
                   <DropdownMenuTrigger
-                    className="opacity-0 group-hover:opacity-100 inline-flex items-center justify-center h-6 w-6 rounded-lg hover:bg-muted shrink-0 cursor-pointer transition-opacity duration-150"
+                    className="opacity-0 group-hover:opacity-100 inline-flex items-center justify-center h-7 w-7 rounded-lg hover:bg-muted hover:text-foreground shrink-0 cursor-pointer transition-all duration-150"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <MoreHorizontal className="h-3 w-3 text-muted-foreground" />
+                    <MoreHorizontal className="h-3.5 w-3.5 text-muted-foreground/60 group-hover:text-foreground" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-36 rounded-xl">
+                  <DropdownMenuContent align="end" className="w-40 py-1">
                     <DropdownMenuItem onClick={(e) => { e.stopPropagation(); startRename(conv) }}>
                       <Pencil className="mr-2 h-3.5 w-3.5" /> Rename
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      className="text-destructive"
+                      variant="destructive"
                       onClick={(e) => { e.stopPropagation(); onDelete(conv.id) }}
                     >
                       <Trash2 className="mr-2 h-3.5 w-3.5" /> Delete

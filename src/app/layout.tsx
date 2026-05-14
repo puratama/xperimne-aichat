@@ -29,6 +29,7 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${syne.variable} ${dmSans.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="h-full font-sans selection:bg-primary/20">
         <div className="noise-overlay" aria-hidden="true" />
