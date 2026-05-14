@@ -1,31 +1,53 @@
-<!-- BEGIN:nextjs-agent-rules -->
 # This is NOT the Next.js you know
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
-<!-- END:nextjs-agent-rules -->
+Next.js 16 has breaking changes. Read `node_modules/next/dist/docs/` before writing any code — it documents the exact installed version.
 
 ## Commands
 
 ```sh
 npm run dev          # next dev -p 3030
-npm run build        # next build
+npm run build        # next build (includes TS check)
 npm run db:push      # push Prisma schema to PostgreSQL
-npm run db:generate  # regenerate Prisma client
-npm run db:studio    # prisma studio on port 3031
+npm run db:generate  # regenerate Prisma client to src/generated/prisma/
+npm run db:studio    # prisma studio --port 3031
+npm run lint         # ESLint 9 flat config
 ```
 
-## Key architecture
+No test framework is installed.
 
-- **Next.js 16 App Router** — `(auth)` and `(chat)` route groups
-- **Prisma 7** — client generated to `src/generated/prisma/client`, requires `@prisma/adapter-pg` and `pg` driver adapter
-- **NextAuth v5** — config in `src/lib/auth.ts`, route handler at `app/api/auth/[...nextauth]`
-- **OpenRouter proxy** — `app/api/chat/proxy/route.ts` forwards to OpenRouter API server-side (zero client-side popup)
-- **shadcn/ui** with Base UI (`@base-ui/react`) instead of Radix — no `asChild` prop, use `render` prop or direct className
+## Architecture
+
+- **Next.js 16 App Router** — route groups `(auth)` and `(chat)`
+- **Prisma 7** — client at `src/generated/prisma/client`; requires `@prisma/adapter-pg` driver. `PrismaClient({ adapter: new PrismaPg({ connectionString }) })` — no-arg constructor does NOT work. Prisma config in `prisma.config.ts`
+- **NextAuth v5** (`next-auth@5.0.0-beta.31`) — config in `src/lib/auth.ts`, route handler at `app/api/auth/[...nextauth]`. **Must use `PrismaAdapter` from `@auth/prisma-adapter`** so OAuth users are persisted to DB. JWT session strategy.
+- **OAuth providers** (Google, GitHub) use `allowDangerousEmailAccountLinking: true`. Credentials provider uses bcrypt. Callback URL path: `/api/auth/callback/{provider}`
+- **shadcn/ui** with Base UI (`@base-ui/react`) — no `asChild` prop, use `render` prop or direct className. Component registry is empty; all UI components are custom.
+- **Tailwind v4** with `@tailwindcss/postcss` — no `tailwind.config.js`. CSS vars in `src/app/globals.css` via `@theme inline {}`
+- **Fonts**: Syne (`--font-heading`), DM Sans (`--font-sans`)
+- **All API routes** use server-side `auth()` from `@/lib/auth` and return 401 if no session
+- **No tests** exist in the repo
+
+## API routes
+
+| Route | Method | Purpose |
+|-------|--------|---------|
+| `/api/chat` | POST | Save message + create conversation, returns `{ conversationId }` |
+| `/api/chat/proxy` | POST | Save message + call OpenRouter API server-side, returns AI response |
+| `/api/conversations` | GET/POST | List / create conversations |
+| `/api/conversations/[id]` | GET/PATCH/DELETE | CRUD single conversation |
+| `/api/auth/register` | POST | Create user with bcrypt-hashed password |
+| `/api/auth/[...nextauth]` | ALL | NextAuth handler |
+
+Route handlers use `params: Promise<{ id: string }>` syntax (Next.js 16 convention).
 
 ## Gotchas
 
 - Port is **3030** (not 3000)
 - `.env` is gitignored; copy `.env.example` and fill in `DATABASE_URL` + `OPENROUTER_API_KEY`
-- PrismaClient requires `{ adapter: new PrismaPg({ connectionString }) }` — does NOT work with no-arg constructor
-- Puter.js SDK (`@heyputer/puter.js`) is uninstalled — all AI calls go through `/api/chat/proxy` server-side
-- `node_modules/next/dist/docs/` contains framework docs — read before modifying Next.js APIs
+- `node_modules/next/dist/docs/` contains framework docs for exact installed version
+- `AUTH_URL` in `.env` must be origin-only (no path, no trailing slash), e.g. `http://localhost:3030`
+- `AUTH_SECRET` must be a real 32-byte base64 secret, not a placeholder
+- PrismaClient requires `{ adapter }` — does NOT work with no-arg constructor
+- shadcn/ui uses **Base UI** (not Radix) — no `asChild`, use `render` prop
+- OpenRouter API key in `.env` as `OPENROUTER_API_KEY` — all AI calls go through server proxy, zero client-side popup
+- `@heyputer/puter.js` is uninstalled; do not use
