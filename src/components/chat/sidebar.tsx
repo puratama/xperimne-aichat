@@ -148,7 +148,7 @@ function SidebarContent({
 
       <div className="border-t border-border/40 px-4 py-3">
         <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/30 font-medium text-center">
-          Xperimne Chatbot
+          {process.env.NEXT_PUBLIC_APP_NAME || "Xperimne"}
         </p>
       </div>
     </div>

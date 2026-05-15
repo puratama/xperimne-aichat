@@ -36,6 +36,9 @@ No test framework is installed.
 | `/api/chat/proxy` | POST | Save message + stream OpenRouter response via SSE, saves AI message on stream end |
 | `/api/conversations` | GET/POST | List / create conversations |
 | `/api/conversations/[id]` | GET/PATCH/DELETE | CRUD single conversation |
+| `/api/user/profile` | GET/PATCH | Get user profile / update name & image |
+| `/api/user/password` | POST | Change/set password |
+| `/api/user/account` | DELETE | Delete account (requires `{ confirmation: "DELETE" }`) |
 | `/api/auth/register` | POST | Create user with bcrypt-hashed password |
 | `/api/auth/[...nextauth]` | ALL | NextAuth handler |
 
@@ -51,10 +54,12 @@ Route handlers use `params: Promise<{ id: string }>` syntax (Next.js 16 conventi
 ## Gotchas
 
 - Port is **3030** (not 3000)
-- `.env` is gitignored; copy `.env.example` and fill in `DATABASE_URL` + `OPENROUTER_API_KEY`
+- `.env` is gitignored; copy `.env.example` and fill in `DATABASE_URL` + `OPENROUTER_API_KEY` + `NEXT_PUBLIC_APP_NAME`
+- `NEXT_PUBLIC_APP_NAME` env variable sets app name across UI (header, sidebar, footer, metadata)
 - `node_modules/next/dist/docs/` contains framework docs for exact installed version
 - `AUTH_URL` in `.env` must be origin-only (no path, no trailing slash), e.g. `http://localhost:3030`
 - `AUTH_SECRET` must be a real 32-byte base64 secret, not a placeholder
 - PrismaClient requires `{ adapter }` — does NOT work with no-arg constructor
 - OpenRouter API key in `.env` as `OPENROUTER_API_KEY` — all AI calls go through server proxy, zero client-side popup
-- `@heyputer/puter.js` is uninstalled; do not use
+- Header dropdown shows user name (from profile), falls back to email
+- Profile page at `/profile` has sections: profile info, password change, danger zone

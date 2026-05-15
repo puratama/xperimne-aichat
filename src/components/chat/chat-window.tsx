@@ -151,7 +151,7 @@ export function ChatWindow({ conversation, onConversationUpdate, onToggleSidebar
         </button>
         <div className="flex items-center gap-1.5">
           <Sparkle className="h-3.5 w-3.5 text-primary" />
-          <span className="font-heading text-xs font-semibold tracking-tight">Xperimne</span>
+          <span className="font-heading text-xs font-semibold tracking-tight">{process.env.NEXT_PUBLIC_APP_NAME || "Xperimne"}</span>
         </div>
       </div>
       <MessageList messages={messages} isLoading={isLoading} />

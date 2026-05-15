@@ -42,13 +42,8 @@ export function MessageList({ messages, isLoading }: MessageListProps) {
           </div>
           <h2 className="font-heading text-xl font-semibold tracking-tight">Start a conversation</h2>
           <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
-            Send a message to begin chatting with AI<br className="hidden sm:inline" /> powered by OpenRouter
+            Send a message to begin chatting with AI
           </p>
-          <div className="mt-6 flex justify-center gap-2">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary/30 animate-pulse" style={{ animationDelay: "0ms" }} />
-            <span className="h-1.5 w-1.5 rounded-full bg-primary/30 animate-pulse" style={{ animationDelay: "300ms" }} />
-            <span className="h-1.5 w-1.5 rounded-full bg-primary/30 animate-pulse" style={{ animationDelay: "600ms" }} />
-          </div>
         </div>
       </div>
     )

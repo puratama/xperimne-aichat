@@ -48,7 +48,7 @@ export default function RegisterPage() {
             <Sparkle className="h-5 w-5 text-primary-foreground" />
           </div>
           <h1 className="font-heading text-2xl font-semibold tracking-tight">Create an account</h1>
-          <p className="text-sm text-muted-foreground">Get started with Xperimne Chat</p>
+          <p className="text-sm text-muted-foreground">Get started with {process.env.NEXT_PUBLIC_APP_NAME || "Xperimne"}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">

@@ -41,7 +41,7 @@ export async function POST(req: Request) {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
       "HTTP-Referer": "https://localhost:3030",
-      "X-Title": "Xperimne Chatbot",
+      "X-Title": `${process.env.NEXT_PUBLIC_APP_NAME || "Xperimne"}`,
     },
     body: JSON.stringify({
       model: "openrouter/free",

@@ -16,7 +16,7 @@ const dmSans = DM_Sans({
 })
 
 export const metadata: Metadata = {
-  title: "Xperimne Chatbot",
+  title: `${process.env.NEXT_PUBLIC_APP_NAME || "Xperimne"}`,
   description: "Free AI chat powered by OpenRouter",
 }
 
