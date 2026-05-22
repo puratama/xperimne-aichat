@@ -1,5 +1,6 @@
 services:
   app:
+    container_name: aichat-app
     build:
       context: .
       args:
@@ -20,6 +21,7 @@ services:
     restart: unless-stopped
 
   postgres:
+    container_name: aichat-db
     image: postgres:16-alpine
     environment:
       POSTGRES_USER: ${DB_USER:-postgres}
